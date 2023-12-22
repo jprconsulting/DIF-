@@ -1,0 +1,138 @@
+<div class="row row-cards">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Visitas</h3>
+            </div>
+            <div class="card-body border-bottom py-3">
+                <div class="d-flex">
+                    <button class="btn btn-primary" class="btn btn-purple" data-bs-toggle="modal" data-bs-target="#modal-report">
+                        <i class="fe fe-plus me-1"></i>Agregar visita
+                    </button>
+                    <div class="ms-auto text-muted">
+                        <div class="input-icon">
+                            <input #busquedaInput type="text" class="form-control form-control-rounded" placeholder="Buscar" />
+                            <span class="input-icon-addon">
+                                <i class="fe fe-search"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table card-table table-vcenter text-nowrap datatable">
+                    <thead>
+                        <tr>
+                            <th class="w-1">#</th>
+                            <th>Beneficiario</th>
+                            <th>Evidencia</th>
+                            <th>Programa social</th>
+                            <th>Descripcion</th>
+                            <th class="text-center" style="width: 7%">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-tbody">
+                        <tr>
+                            <td>1</td>
+                            <td>2</td>
+                            <td>3</td>
+                            <td>4</td>
+                            <td>5</td>
+                            <td>
+                                <div class="d-flex justify-content-between">
+                                    <button class="btn btn-warning btn-icon btn-sm" data-bs-toggle="modal" data-bs-target="#modal-report">
+                                        <i class="fe fe-edit"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+<div class="modal modal-blur fade" id="modal-report" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Visitas
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" #closebutton (click)="ResetForm()"></button>
+                </div>
+                <form [formGroup]="EvidenciaForm" class="p-4">
+                    <div class="row">
+                        <div class="col-4">
+                        
+                            <label class="form-label" for="areasadscripcionSelect">Selecciona área de adscripción:</label>
+                            <select class="form-select" id="areasadscripcionSelect" (change)="filtrarArea($event, 'areasadscripcion')">
+                                <option value="">Selecciona un valor</option>
+                                <option > area.nombre </option>
+                            </select>
+                        </div>
+                        <div class="col-4">
+                            <label class="form-label" for="programaSocialSelect">Selecciona un programa social:</label>
+                            <select class="form-select"  id="programaSocialSelect" (change)="filtrarProgramaSocial($event, 'programaSocial')">
+                                <option value="">Selecciona un valor</option>
+                                <option > programa.nombre </option>
+                            </select>
+
+                        </div>
+                        <div class="col-4">
+                            <label for="Beneficiario" class="form-label">Beneficiario:</label>
+                            <ng-select class="form-select" bindLabel="nombreCompleto" bindValue="id" formControlName="beneficiarioId"  [ngClass]="{'is-invalid': EvidenciaForm.get('beneficiarioId')?.touched && EvidenciaForm.get('beneficiarioId')?.invalid}">
+                            <option  value="1"> area.nombre </option>
+                        </ng-select>
+                            
+                            <div *ngIf="EvidenciaForm.get('beneficiarioId')?.touched" class="error-message">
+                                <div *ngIf="EvidenciaForm.get('beneficiarioId')?.hasError('required')">
+                                    El beneficiario es requerido
+                                </div>
+                            </div>
+                        </div>
+
+                        <div  class="col-4">
+                            <label for="Descripcion" class="form-label">Descripción*:</label>
+                            <textarea id="Descripcion" name="Descripcion" rows="2" class="form-control" formControlName="Descripcion"></textarea>
+                            <div *ngIf="EvidenciaForm.get('Descripcion')?.touched" class="error-message">
+                                <div *ngIf="EvidenciaForm.get('Descripcion')?.hasError('required')">
+                                    La descripción es requerido
+                                </div>
+                                <div *ngIf="EvidenciaForm.get('Descripcion')?.hasError('minlength')">
+                                    La descripción debe tener al menos 10 caracteres
+                                </div>
+                            </div>
+                        </div>
+                        <div  class="col-4">
+                            <label for="imagenBase64" class="form-label">Evidencia fotografica*:</label>
+                            <input  type="text" class="form-control" type="file" (change)="onFileChange($event)" formControlName="imagenBase64">
+
+                            <div *ngIf="EvidenciaForm.get('imagenBase64')?.touched" class="error-message">
+                                <div *ngIf="EvidenciaForm.get('imagenBase64')?.hasError('required')">
+                                    La evidencia es requerida
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <img class="img image" *ngIf="EvidenciaForm.get('imagenBase64')?.value" [src]="'data:image/jpeg;base64,' + EvidenciaForm.get('imagenBase64')?.value" width="100%" height="100%" alt="Vista previa de la imagen">
+                        </div>
+
+                    </div>
+
+                    <br> Todos los campos marcados con * son requeridos
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" [disabled]="!EvidenciaForm.valid" class="btn btn-purple">
+                                  Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
