@@ -6,13 +6,14 @@ import { UsuarioService } from 'src/app/core/services/usuario.service';
 import { LoadingStates } from 'src/app/global/globals';
 import { Usuario } from 'src/app/models/usuario';
 import { Rol } from 'src/app/models/Rol';
+declare const google: any;
 
 @Component({
-  selector: 'app-usuarios',
-  templateUrl: './usuarios.component.html',
-  styleUrls: ['./usuarios.component.css']
+  selector: 'app-beneficiarios',
+  templateUrl: './beneficiarios.component.html',
+  styleUrls: ['./beneficiarios.component.css']
 })
-export class UsuariosComponent implements OnInit {
+export class BeneficiariosComponent implements OnInit {
 
   @ViewChild('closebutton') closebutton!: ElementRef;
 
@@ -46,22 +47,19 @@ export class UsuariosComponent implements OnInit {
 
   crearFormularioUsuario() {
     this.userForm = this.formBuilder.group({
-      usuarioId: [null],
-      rolId: [null, Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      password: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(8),
-          Validators.pattern(/[A-Z]/),
-          Validators.pattern(/[0-9]/),
-        ],
-      ],
-      nombre: ['', Validators.required],
-      apellidoMaterno: ['', Validators.required],
-      apellidoPaterno: ['', Validators.required],
-      estatus: [false],
+        id: [null],
+        nombres: ['', [Validators.required, Validators.minLength(3), Validators.pattern('^[a-zA-Z ]+$')]],
+        apellidoPaterno: ['',Validators.required],
+        apellidoMaterno: ['',Validators.required],
+        fechaNacimiento: ['', ],
+        domicilio: ['',Validators.required],
+        sexo: ['',Validators.required],
+        curp: ['',Validators.required],
+        latitud: ['',Validators.required],
+        longitud: ['',Validators.required],
+        estatus: [true, [Validators.required]],
+        municipioId: ['',Validators.required],
+        programaSocialId: ['',Validators.required],
     });
   }
 
@@ -197,4 +195,128 @@ export class UsuariosComponent implements OnInit {
     );
   }
 
+  map() {
+    const mapElement = document.getElementById("map-canvas");
+    if (!mapElement) {
+      console.error("El elemento del mapa no fue encontrado");
+      return;
+    }
+
+    const lat = mapElement.getAttribute("data-lat");
+    const lng = mapElement.getAttribute("data-lng");
+
+    if (!lat || !lng) {
+      console.error("Los atributos de latitud y/o longitud no están presentes");
+      return;
+    }
+
+    const myLatlng = new google.maps.LatLng(parseFloat(lat), parseFloat(lng));
+
+    const mapOptions = {
+      zoom: 13,
+      scrollwheel: false,
+      center: myLatlng,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      styles: [
+        {
+          featureType: "administrative",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#444444" }],
+        },
+        {
+          featureType: "landscape",
+          elementType: "all",
+          stylers: [{ color: "#f2f2f2" }],
+        },
+        {
+          featureType: "poi",
+          elementType: "all",
+          stylers: [{ visibility: "off" }],
+        },
+        {
+          featureType: "road",
+          elementType: "all",
+          stylers: [{ saturation: -100 }, { lightness: 45 }],
+        },
+        {
+          featureType: "road.highway",
+          elementType: "all",
+          stylers: [{ visibility: "simplified" }],
+        },
+        {
+          featureType: "road.arterial",
+          elementType: "labels.icon",
+          stylers: [{ visibility: "off" }],
+        },
+        {
+          featureType: "transit",
+          elementType: "all",
+          stylers: [{ visibility: "off" }],
+        },
+        {
+          featureType: "water",
+          elementType: "all",
+          stylers: [{ color: "#0ba4e2" }, { visibility: "on" }],
+        },
+      ],
+    };
+
+    const map = new google.maps.Map(mapElement, mapOptions);
+
+    const input = document.getElementById('searchInput');
+    const autocomplete = new google.maps.places.Autocomplete(input);
+    autocomplete.bindTo('bounds', map);
+
+    autocomplete.addListener("place_changed", () => {
+      const place = autocomplete.getPlace();
+      if (!place.geometry) {
+        window.alert("Autocomplete's returned place contains no geometry");
+        return;
+      }
+
+      if (place.formatted_address) {
+        // Actualizar el valor del campo 'domicilio' con la dirección obtenida del mapa
+        this.userForm.patchValue({
+          domicilio: place.formatted_address
+        });
+      }
+
+      const selectedLat = place.geometry.location.lat();
+      const selectedLng = place.geometry.location.lng();
+
+      mapElement.setAttribute("data-lat", selectedLat.toString());
+      mapElement.setAttribute("data-lng", selectedLng.toString());
+
+      const newLatLng = new google.maps.LatLng(selectedLat, selectedLng);
+      map.setCenter(newLatLng);
+      map.setZoom(15);
+
+      const marker = new google.maps.Marker({
+        position: newLatLng,
+        map: map,
+        animation: google.maps.Animation.DROP,
+        title: place.name,
+      });
+
+      const contentString = `
+        <!-- Contenido de la ventana de información (infowindow) -->
+        <!-- ... -->
+      `;
+
+      const infowindow = new google.maps.InfoWindow({
+        content: contentString,
+      });
+
+      google.maps.event.addListener(marker, "click", () => {
+        infowindow.open(map, marker);
+      });
+
+      this.userForm.patchValue({
+        longitud: selectedLng,
+        latitud: selectedLat
+      });
+    });
+  }
+
 }
+

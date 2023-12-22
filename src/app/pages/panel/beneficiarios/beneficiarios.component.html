@@ -2,13 +2,14 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Usuarios</h3>
+                <h3 class="card-title">Beneficiarios</h3>
             </div>
             <div class="card-body border-bottom py-3">
                 <div class="d-flex">
                     <button class="btn btn-custom-purple" data-bs-toggle="modal" data-bs-target="#modal-report" (click)="handleChangeAdd()">
-            <i class="ti ti-plus me-1"></i>Agregar Usuario
-          </button>
+                        <i class="ti ti-plus me-1"></i>Agregar beneficiario
+                    </button>
+                    
                     <div class="ms-auto text-muted">
                         <div class="input-icon">
                             <input #busquedaInput type="text" [(ngModel)]="filtro" class="form-control form-control-rounded" placeholder="Buscar" />
@@ -34,9 +35,10 @@
                                     <th>Nombre(s)</th>
                                     <th>Apellido paterno</th>
                                     <th>Apellido materno</th>
-                                    <th>Rol</th>
-                                    <th>Correo</th>
-                                    <th>Estatus</th>
+                                    <th>Fecha de nacimiento</th>
+                                    <th>CURP</th>
+                                    <th>Género</th>
+                                    <th>Dirección</th>
                                     <th class="text-center" style="width: 7%">Acciones</th>
                                 </tr>
                             </thead>
@@ -145,35 +147,40 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-lg-6">
+                            <div class="col-lg-4">
                                 <div class="mb-3">
-                                    <label class="form-label">Correo Electrónico</label>
-                                    <input type="text" class="form-control" formControlName="email" />
+                                    <label class="form-label">Fecha de nacimiento</label>
+                                    <input type="date" class="form-control" formControlName="email" />
                                     <div *ngIf="userForm.get('email')?.touched" class="error-message">
                                         <div *ngIf="userForm.get('email')?.hasError('required')">
-                                            El correo electrónico es requerido
-                                        </div>
-                                        <div *ngIf="userForm.get('email')?.hasError('email')">
-                                            Ingresa una dirección de correo electrónico válida
+                                            La fecha de nacimiento es requerida
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="col-lg-6">
+                            <div class="col-lg-4">
                                 <div class="mb-3">
-                                    <label class="form-label">Contraseña</label>
+                                    <label class="form-label">CURP</label>
                                     <input type="password" class="form-control" formControlName="password" />
+                                    <div *ngIf="userForm.get('email')?.touched" class="error-message">
+                                        <div *ngIf="userForm.get('email')?.hasError('required')">
+                                            El CURP requerido
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                                    <div *ngIf="userForm.get('password')?.touched" class="error-message">
-                                        <div *ngIf="userForm.get('password')?.hasError('required')">
-                                            La contraseña es requerida
-                                        </div>
-                                        <div *ngIf="userForm.get('password')?.hasError('minlength')">
-                                            La contraseña debe tener al menos 8 caracteres
-                                        </div>
-                                        <div *ngIf="userForm.get('password')?.hasError('pattern')">
-                                            La contraseña debe contener al menos una letra mayúscula y un número
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Género</label>
+                                    <select formControlName="sexo" class="form-select">
+                                        <option value="1">Masculino</option>
+                                        <option value="2">Femenino</option>
+                                    </select>
+                                    <div *ngIf="userForm.get('email')?.touched" class="error-message">
+                                        <div *ngIf="userForm.get('email')?.hasError('required')">
+                                            El género es requerido
                                         </div>
                                     </div>
                                 </div>
@@ -181,23 +188,33 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-lg-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Rol</label>
-                                    <ng-select placeholder="Elegir" [items]="roles" bindLabel="nombre" bindValue="rolId" [searchable]="false" [clearable]="false" formControlName="rolId">
-                                        <ng-template ng-option-tmp let-item="item">
-                                            {{ item.nombre }}
-                                        </ng-template>
-                                    </ng-select>
-
-                                    <div *ngIf="userForm.get('rolId')?.touched" class="error-message">
-                                        <div *ngIf="userForm.get('rolId')?.hasError('required')">
-                                            El rol es requerido
-                                        </div>
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label class="form-label">Programa social</label>
+                                <select formControlName="sexo" class="form-select">
+                                </select>
+                                <div *ngIf="userForm.get('email')?.touched" class="error-message">
+                                    <div *ngIf="userForm.get('email')?.hasError('required')">
+                                        El género es requerido
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label class="form-label">Municipio</label>
+                                <select formControlName="sexo" class="form-select">
+                                </select>
+                                <div *ngIf="userForm.get('email')?.touched" class="error-message">
+                                    <div *ngIf="userForm.get('email')?.hasError('required')">
+                                        El género es requerido
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
+                        <div class="row">
                             <div class="col-lg-6">
                                 <div class="mb-3">
                                     <label for="estadoActivo" class="form-label">Estatus</label>
@@ -210,6 +227,21 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="form-label">Ubicar en el mapa*:</label>
+                                <input id="searchInput" formControlName="domicilio" class="form-control" type="text"
+                                    placeholder="Enter a location" (input)="map()" />
+                            </div>
+                            <div class="col-md-9">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div id="map-canvas" class="map-canvas" data-lat="19.316818295403003" data-lng="-98.23837658175323"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <!-- Fin del formulario -->
                     </div>
                     <div class="modal-footer">
