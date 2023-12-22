@@ -1,0 +1,122 @@
+<div class="row row-cards">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Asignaciones</h3>
+            </div>
+            <div class="card-body border-bottom py-3">
+                <div class="d-flex">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-report" (click)="handleChangeAdd()">
+                      <i class="ti ti-plus me-1"></i>Agregar asignación
+                    </button>
+                    <div class="ms-auto text-muted">
+                        <div class="input-icon">
+                            <input #busquedaInput type="text" [(ngModel)]="filtro" (input)="filtrarAsignaciones()" class="form-control form-control-rounded" placeholder="Buscar" />
+                            <span class="input-icon-addon">
+                          <i class="ti ti-search"></i>
+                        </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <ng-container [ngSwitch]="isLoadingUsers">
+                <div class="progress" *ngSwitchCase="2">
+                    <div class="progress-bar progress-bar-indeterminate bg-green"></div>
+                </div>
+
+                <div *ngSwitchCase="3">
+                    <div class="table-responsive">
+                        <table class="table card-table table-vcenter text-nowrap datatable">
+                            <thead>
+                                <tr>
+                                    <th>Nombre del formulario</th>
+                                    <th>Usuario</th>
+                                    <th class="text-center" style="width: 7%">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-tbody">
+                                <tr *ngFor="let asignacion of formuser | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage };let i = index">
+                                    <td>{{ obtenerNombreFormulario(asignacion.formularioId) }}</td>
+                                    <td>{{ obtenerNombreUsuario(asignacion.usuarioIds) }}</td>
+                                    <td>
+                                        <div class="d-flex justify-content-between">
+                                            <button class="btn btn-warning btn-icon btn-sm" data-bs-toggle="modal" data-bs-target="#modal-report" (click)="setDataModalUpdate(asignacion)">
+                                  <i class="ti ti-edit"></i>
+                                </button>
+                                            <button class="btn btn-danger btn-icon btn-sm" (click)="borrarFormulario(asignacion.formularioId, asignacion.usuarioIds[0])">
+                                  <i class="ti ti-eraser"></i>
+                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination-and-items-per-page" style="margin-bottom: 0px">
+                        <div class="items-per-page">
+                            <label for="itemsPerPage">Elementos por página:</label>
+                            <select id="itemsPerPage" [(ngModel)]="itemsPerPage" style="margin-left: 5px">
+          <option *ngFor="let option of itemsPerPageOptions" [value]="option">
+            {{ option }}
+          </option>
+        </select>
+                        </div>
+                        <div class="pagination-container">
+                            <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
+                        </div>
+                    </div>
+                </div>
+                <app-no-results *ngSwitchCase="4"></app-no-results>
+            </ng-container>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL AGREGAR USUARIO -->
+<div class="modal modal-blur fade" id="modal-report" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    {{ isModalAdd ? "Agregar" : "Actualizar" }} Asignación de Formulario
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" #closebutton></button>
+            </div>
+
+            <form [formGroup]="userForm" (ngSubmit)="submitUsuario()">
+                <div class="modal-body">
+                    <!-- Inicio del formulario -->
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <label for="formularioId">Seleccione el formulario:</label>
+                            <div class="form-group">
+                                <select formControlName="formularioId" id="formularioId" name="formularioId" style="width: 1170px; height: 38px;">
+                                <option value="">Seleccione un formulario</option>
+                  <option *ngFor="let item of formulario" [ngValue]="item.formularioId">{{ item.formName }}</option>
+                </select>
+                            </div>
+                        </div>
+                        <br><br>
+                        <div class="col-lg-12">
+                            <label for="usuarioIds">Seleccione los usuarios:</label>
+                            <ng-select [items]="usuario" [multiple]="true" [bindValue]="'usuarioId'" [bindLabel]="'nombre'" formControlName="usuarioIds">
+                                <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                                    <input id="item-{{index}}" type="checkbox" /> {{item.nombre}}
+                                </ng-template>
+                            </ng-select>
+                        </div>
+                    </div>
+                    <!-- Fin del formulario -->
+                    <br>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" [disabled]="!userForm.valid">
+            {{ isModalAdd ? "Agregar" : "Actualizar" }}
+          </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- FIN MODAL -->
