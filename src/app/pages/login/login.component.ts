@@ -28,39 +28,6 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.createFormUserLogin();
   }
-
-  login() {
-    this.user = this.formUserLogin.value as AppUser;
-    this.spinnerService.show();
-    this.securityService.login(this.user).subscribe({
-      next: () => {
-        setTimeout(() => {
-          this.spinnerService.hide();
-          this.router.navigateByUrl(this.returnUrl);
-        }, 500);
-      },
-      error: (error) => {
-        this.mensajeService.mensajeError(error);
-        this.spinnerService.hide();
-      }
-    });
-  }
-
-
-  createFormUserLogin() {
-    this.formUserLogin = this.formBuilder.group({
-      email: ['', Validators.compose([
-        Validators.required, Validators.minLength(3)
-      ])],
-      password: ['', Validators.compose([
-        Validators.required, Validators.minLength(3)
-      ])]
-    });
-  }
-
-
-
 
 }
