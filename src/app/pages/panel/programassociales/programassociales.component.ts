@@ -8,6 +8,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class ProgramassocialesComponent {
   SocialForm!: FormGroup;
+  isUpdating: boolean = false;
   selectedColor: string = '';
   constructor(
     private formBuilder: FormBuilder,
@@ -42,4 +43,20 @@ export class ProgramassocialesComponent {
   ResetForm() {
     this.SocialForm.reset();
   }
+  submit() {
+    if (this.isUpdating) {
+      this.actualizar();
+    } else {
+      this.agregar();
+    }
+  }
+
+  actualizar(){
+
+  }
+
+  agregar(){
+
+  }
+
 }

@@ -62,7 +62,7 @@
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" #closebutton (click)="ResetForm()"></button>
                 </div>
-                <form [formGroup]="EvidenciaForm" class="p-4">
+                <form [formGroup]="EvidenciaForm" class="p-4" (ngSubmit)="submit()">
                     <div class="row">
                         <div class="col-4">
                         
@@ -126,7 +126,7 @@
                         <div class="col-12">
                             <div class="d-flex justify-content-end">
                                 <button type="submit" [disabled]="!EvidenciaForm.valid" class="btn btn-purple">
-                                  Agregar
+                                    {{ isUpdating ? "Actualizar " : "Agregar " }}
                                 </button>
                             </div>
                         </div>

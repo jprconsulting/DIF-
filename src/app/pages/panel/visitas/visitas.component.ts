@@ -10,6 +10,7 @@ export class VisitasComponent {
   EvidenciaForm!: FormGroup;
   selectedColor: string = '';
   imagenAmpliada: string | null = null;
+  isUpdating: boolean = false;
   constructor(
     private formBuilder: FormBuilder,
   ) {
@@ -52,7 +53,24 @@ filtrarArea(event: any, tipo: string) {
 
 filterBeneficiarios(searchTerm: string){
 }
+
 ResetForm() {
   this.EvidenciaForm.reset();
+}
+
+submit() {
+  if (this.isUpdating) {
+    this.actualizar();
+  } else {
+    this.agregar();
+  }
+}
+
+actualizar(){
+
+}
+
+agregar(){
+
 }
 }
